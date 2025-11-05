@@ -1,0 +1,65 @@
+zabbix_export:
+  version: '6.4'
+  template_groups:
+    - uuid: 0b1cc2278990439b99b24b55e86cd6df
+      name: Services/Fabric/Loadbalancer
+  templates:
+    - uuid: e5bfeb1eb37947d59b604fa2d443a22f
+      template: 'Template Keepalived'
+      name: 'Template Keepalived'
+      groups:
+        - name: Services/Fabric/Loadbalancer
+      items:
+        - uuid: 4fc6bf205776409aa97ddc272c1299f1
+          name: 'Keepalived: número de processos ativos'
+          key: 'proc.num[keepalived]'
+          history: 90d
+          tags:
+            - tag: Application
+              value: Keepalived
+          triggers:
+            - uuid: 1b6a23c73d4740cc87ab62275ccdeaac
+              expression: 'last(/Template Keepalived/proc.num[keepalived])<2'
+              name: 'Processos do Keepalived parados'
+              priority: DISASTER
+      discovery_rules:
+        - uuid: 8b2972124ccd4d1f9683621e6518275c
+          name: 'VRRP instances'
+          key: keepalived.instance.discovery
+          delay: 300s
+          lifetime: 30d
+          item_prototypes:
+            - uuid: 7c28888ea8894bcea2ee81506551dd76
+              name: 'Keepalived: instância {#INSTANCE} no estado BACKUP'
+              key: 'vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(BACKUP)]'
+              tags:
+                - tag: Application
+                  value: Keepalived
+              trigger_prototypes:
+                - uuid: df91d00e81474161b54ad7f6779aaa1d
+                  expression: 'last(/Template Keepalived/vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(BACKUP)],#2)=0 and last(/Template Keepalived/vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(BACKUP)])=1'
+                  name: 'Keepalived: instância {#INSTANCE} mudou para o estado BACKUP'
+                  priority: AVERAGE
+                  tags:
+                    - tag: Application
+                      value: Keepalived
+            - uuid: 0515d7ad822a4f37bb120bf2251fd3b0
+              name: 'Keepalived: instância {#INSTANCE} no estado FAULT'
+              key: 'vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(FAULT)]'
+              tags:
+                - tag: Application
+                  value: Keepalived
+              trigger_prototypes:
+                - uuid: 34369b1e69fc4455bfa3972ed7abbf6e
+                  expression: 'last(/Template Keepalived/vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(FAULT)],#2)=0 and last(/Template Keepalived/vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(FAULT)])=1'
+                  name: 'Keepalived: instância {#INSTANCE} mudou para o estado FAULT'
+                  priority: AVERAGE
+                  tags:
+                    - tag: Application
+                      value: Keepalived
+            - uuid: f94848d1ab504330908c1f09e5c1a019
+              name: 'Keepalived: instância {#INSTANCE} no estado MASTER'
+              key: 'vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(MASTER)]'
+              tags:
+                - tag: Application
+                  value: Keepalived
