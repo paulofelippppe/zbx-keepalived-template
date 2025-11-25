@@ -29,37 +29,44 @@ zabbix_export:
           delay: 300s
           lifetime: 30d
           item_prototypes:
-            - uuid: 7c28888ea8894bcea2ee81506551dd76
-              name: 'Keepalived: instância {#INSTANCE} no estado BACKUP'
-              key: 'vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(BACKUP)]'
-              tags:
-                - tag: Application
-                  value: Keepalived
+            - uuid: f6d28636224945fba07df3537120440c
+              name: 'Keepalived: state da instância {#INSTANCE}'
+              key: 'keepalived.instance.check[{#INSTANCE}]'
+              value_type: TEXT
+              trends: '0'
               trigger_prototypes:
-                - uuid: df91d00e81474161b54ad7f6779aaa1d
-                  expression: 'last(/Template Keepalived/vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(BACKUP)],#2)=0 and last(/Template Keepalived/vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(BACKUP)])=1'
-                  name: 'Keepalived: instância {#INSTANCE} mudou para o estado BACKUP'
-                  priority: AVERAGE
+                - uuid: faddbf76f6fe4367aeedea5bb9905400
+                  expression: 'count(/Template Keepalived/keepalived.instance.check[{#INSTANCE}],#2,,"BACKUP")=1 and last(/Template Keepalived/keepalived.instance.check[{#INSTANCE}])="BACKUP"'
+                  name: 'Alto_Impacto - {HOST.NAME}: Keepalived: instância {#INSTANCE} mudou para o state BACKUP'
+                  priority: HIGH
                   tags:
                     - tag: Application
                       value: Keepalived
-            - uuid: 0515d7ad822a4f37bb120bf2251fd3b0
-              name: 'Keepalived: instância {#INSTANCE} no estado FAULT'
-              key: 'vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(FAULT)]'
-              tags:
-                - tag: Application
-                  value: Keepalived
-              trigger_prototypes:
-                - uuid: 34369b1e69fc4455bfa3972ed7abbf6e
-                  expression: 'last(/Template Keepalived/vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(FAULT)],#2)=0 and last(/Template Keepalived/vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(FAULT)])=1'
-                  name: 'Keepalived: instância {#INSTANCE} mudou para o estado FAULT'
-                  priority: AVERAGE
+                - uuid: 05bc333d96f243aca6ffb3e9eedc8c2c
+                  expression: 'count(/Template Keepalived/keepalived.instance.check[{#INSTANCE}],#2,,"DELETED")=1 and last(/Template Keepalived/keepalived.instance.check[{#INSTANCE}])="DELETED"'
+                  name: 'Alto_Impacto - {HOST.NAME}: Keepalived: instância {#INSTANCE} mudou para o state DELETED'
+                  priority: HIGH
                   tags:
                     - tag: Application
                       value: Keepalived
-            - uuid: f94848d1ab504330908c1f09e5c1a019
-              name: 'Keepalived: instância {#INSTANCE} no estado MASTER'
-              key: 'vfs.file.regmatch[/var/run/keepalived_status_{#INSTANCE},^.*(MASTER)]'
-              tags:
-                - tag: Application
-                  value: Keepalived
+                - uuid: 9a306b6b2a8b43709f69f79ecbfd1335
+                  expression: 'count(/Template Keepalived/keepalived.instance.check[{#INSTANCE}],#2,,"FAULT")=1 and last(/Template Keepalived/keepalived.instance.check[{#INSTANCE}])="FAULT"'
+                  name: 'Alto_Impacto - {HOST.NAME}: Keepalived: instância {#INSTANCE} mudou para o state FAULT'
+                  priority: HIGH
+                  tags:
+                    - tag: Application
+                      value: Keepalived
+                - uuid: 78a8f0e24ee34bf980632982859e8518
+                  expression: 'count(/Template Keepalived/keepalived.instance.check[{#INSTANCE}],#2,,"STOP")=1 and last(/Template Keepalived/keepalived.instance.check[{#INSTANCE}])="STOP"'
+                  name: 'Alto_Impacto - {HOST.NAME}: Keepalived: instância {#INSTANCE} mudou para o state STOP'
+                  priority: HIGH
+                  tags:
+                    - tag: Application
+                      value: Keepalived
+                - uuid: 0badbf6f9aab4bfea7d5f571abfd1740
+                  expression: 'count(/Template Keepalived/keepalived.instance.check[{#INSTANCE}],#2,,"MASTER")=1 and last(/Template Keepalived/keepalived.instance.check[{#INSTANCE}])="MASTER"'
+                  name: 'Médio Impacto - {HOST.NAME}: Keepalived: instância {#INSTANCE} mudou para o state MASTER'
+                  priority: HIGH
+                  tags:
+                    - tag: Application
+                      value: Keepalived

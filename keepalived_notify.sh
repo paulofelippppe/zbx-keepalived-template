@@ -1,4 +1,2 @@
 #!/bin/bash
-touch /var/run/keepalived_status_$2
-chmod 0644 /var/run/keepalived_status_$2
-echo "$1 $2 has transitioned to the $3 state with a priority of $4" > /var/run/keepalived_status_$2
+printf "$1 $2\nSTATE=$3\nPRIORITY=$4" > /var/run/keepalived_status_$2
